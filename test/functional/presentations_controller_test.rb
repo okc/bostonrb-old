@@ -36,7 +36,7 @@ class PresentationsControllerTest < ActionController::TestCase
 
     should 'have a form to create a new Presentation' do
       assert_select 'form[id=new_presentation][action=/presentations]' do
-        should_have_presentation_form_fields
+        assert_have_presentation_form_fields
       end
     end
   end
@@ -67,7 +67,7 @@ class PresentationsControllerTest < ActionController::TestCase
 
     should 'have a form to create a new Presentation' do
       assert_select "form[id=edit_presentation_#{@presentation.to_param}][action=/presentations/#{@presentation.to_param}]" do
-        should_have_presentation_form_fields
+        assert_have_presentation_form_fields
       end
     end
   end
@@ -107,7 +107,7 @@ class PresentationsControllerTest < ActionController::TestCase
 
   protected
 
-  def should_have_presentation_form_fields
+  def assert_have_presentation_form_fields
     assert_select 'input[id=presentation_title][type=text]'
     assert_select 'input[id=presentation_url][type=text]'
     assert_select 'input[id=presentation_submit][type=submit]'

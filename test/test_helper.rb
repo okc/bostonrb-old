@@ -2,10 +2,15 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
 
-class ActiveSupport::TestCase
-  self.use_transactional_fixtures = true
-  self.use_instantiated_fixtures  = false
+require 'spec'
+require 'spec/rails'
+require 'spec/interop/test'
+require 'spec/autorun'
 
+require 'shoulda'
+require 'shoulda/test_unit'
+
+class ActiveSupport::TestCase
   def file_fixture(name)
     File.read(File.join(File.dirname(__FILE__), "file_fixtures", name))
   end
@@ -40,16 +45,53 @@ class ActiveSupport::TestCase
   end
 end
 
-module StubChainMocha
-  module Object
-    def stub_chain(*methods)
-      while methods.length > 1 do
-        stubs(methods.shift).returns(self)
+# This hack is currently necessary to get spec/interop to pick up #should state
+module Shoulda
+  class Context
+    def create_test_from_should_hash(should)
+      test_name = ["test_", full_name, "should", "#{should[:name]}. "].flatten.join(' ').to_sym
+
+      context = self
+      test_unit_class.send(:define_method, test_name) do
+        begin
+          context.run_parent_setup_blocks(self)
+          should[:before].bind(self).call if should[:before]
+          context.run_current_setup_blocks(self)
+          should[:block].bind(self).call
+        ensure
+          context.run_all_teardown_blocks(self)
+        end
       end
-      stubs(methods.shift)
     end
   end
 end
 
-Object.send(:include, StubChainMocha::Object)
+# hack to get mocha working on rspec
+# we should submit a patch to rspec since mocha renamed "standalone" to "api" (good job)
+require 'mocha/api'
+require 'mocha/object'
+module Spec
+  module Adapters
+    module MockFramework
+      include Mocha::API
+      def setup_mocks_for_rspec
+        mocha_setup
+      end
+      def verify_mocks_for_rspec
+        mocha_verify
+      end
+      def teardown_mocks_for_rspec
+        mocha_teardown
+      end
+    end
+  end
+end
 
+class Object
+  def stub_chain(*methods)
+    while methods.length > 1 do
+      stubs(methods.shift).returns(self)
+    end
+    stubs(methods.shift)
+  end
+end

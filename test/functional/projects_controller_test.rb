@@ -30,7 +30,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
     should 'have a form to create a new Project' do
       assert_select 'form[id=new_project][action=/projects]' do
-        should_have_project_form_fields
+        assert_have_project_form_fields
       end
     end
   end
@@ -71,7 +71,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
     should 'have a form to create a new Project' do
       assert_select "form[id=edit_project_#{@project.to_param}][action=/projects/#{@project.to_param}]" do
-        should_have_project_form_fields
+        assert_have_project_form_fields
       end
     end
   end
@@ -121,7 +121,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
   protected
 
-  def should_have_project_form_fields
+  def assert_have_project_form_fields
     assert_select 'input[id=project_name][type=text]'
     assert_select 'input[id=project_homepage_url][type=text]'
     assert_select 'input[id=project_feed_url][type=text]'

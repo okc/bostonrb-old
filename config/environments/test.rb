@@ -21,8 +21,14 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
+config.gem 'rspec',
+           :lib     => false,
+           :version => '1.2.6'
+config.gem 'rspec-rails',
+           :lib     => false,
+           :version => '1.2.6'
 config.gem 'jferris-mocha',
-           :lib     => 'mocha',
+           :lib     => false,
            :source  => 'http://gems.github.com', 
            :version => '= 0.9.5.0.1241126838'
 config.gem 'thoughtbot-factory_girl', 
@@ -30,7 +36,7 @@ config.gem 'thoughtbot-factory_girl',
            :source  => 'http://gems.github.com', 
            :version => '= 1.2.1'
 config.gem 'thoughtbot-shoulda', 
-           :lib     => 'shoulda', 
+           :lib     => false,
            :source  => 'http://gems.github.com', 
            :version => '= 2.10.1'
 config.gem 'webrat',

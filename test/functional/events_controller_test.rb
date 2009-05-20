@@ -58,7 +58,7 @@ class EventsControllerTest < ActionController::TestCase
 
     should 'have new_event form' do
       assert_select 'form[id=new_event]' do
-        should_have_event_form_fields
+        assert_have_event_form_fields
         assert_select 'input[type=submit][id=event_submit]'
       end
     end
@@ -130,7 +130,7 @@ class EventsControllerTest < ActionController::TestCase
 
     should 'have event form' do
       assert_select "form[id=edit_event_#{@event.to_param}]" do
-        should_have_event_form_fields
+        assert_have_event_form_fields
         assert_select 'input[type=submit][id=event_submit]'
       end
     end
@@ -175,7 +175,7 @@ class EventsControllerTest < ActionController::TestCase
 
     should 'have update event form' do
       assert_select "form[id=edit_event_#{@event.to_param}]" do
-        should_have_event_form_fields
+        assert_have_event_form_fields
         assert_select 'input[type=submit][id=event_submit]'
       end
     end
@@ -183,7 +183,7 @@ class EventsControllerTest < ActionController::TestCase
 
   protected
 
-  def should_have_event_form_fields()
+  def assert_have_event_form_fields()
     assert_select 'input[id=event_title][type=text]'
     assert_select 'input[id=event_location][type=text]'
     assert_select 'textarea[id=event_description]'

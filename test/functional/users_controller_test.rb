@@ -23,7 +23,7 @@ class UsersControllerTest < ActionController::TestCase
 
     should "have edit user form" do
       assert_select "form[id=edit_user_#{@user.to_param}]" do
-        should_have_user_form_fields
+        assert_have_user_form_fields
         assert_select 'input[type=submit][id=user_submit]'
       end
     end
@@ -69,7 +69,7 @@ class UsersControllerTest < ActionController::TestCase
 
     should 'have update user form' do
       assert_select "form[id=edit_user_#{@user.to_param}]" do
-        should_have_user_form_fields
+        assert_have_user_form_fields
         assert_select 'input[type=submit][id=user_submit]'
       end
     end
@@ -77,7 +77,7 @@ class UsersControllerTest < ActionController::TestCase
 
   protected
 
-  def should_have_user_form_fields()
+  def assert_have_user_form_fields()
     assert_select 'input[id=user_email][type=text]'
     assert_select 'input[id=user_twitter][type=text]'
   end

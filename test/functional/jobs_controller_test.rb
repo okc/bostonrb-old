@@ -37,7 +37,7 @@ class JobsControllerTest < ActionController::TestCase
 
     should 'have new_event form' do
       assert_select 'form[id=new_job]' do
-        should_have_job_form_fields
+        assert_have_job_form_fields
       end
     end
   end
@@ -128,7 +128,7 @@ class JobsControllerTest < ActionController::TestCase
 
     should 'have a form to create a new Job' do
       assert_select "form[id=edit_job_#{@job.to_param}][action=/jobs/#{@job.to_param}]" do
-        should_have_job_form_fields
+        assert_have_job_form_fields
       end
     end
   end
@@ -171,7 +171,7 @@ class JobsControllerTest < ActionController::TestCase
 
   protected
 
-  def should_have_job_form_fields
+  def assert_have_job_form_fields
     assert_select 'input[id=job_title][type=text]'
     assert_select 'input[id=job_location][type=text]'
     assert_select 'input[id=job_organization][type=text]'
