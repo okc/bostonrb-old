@@ -4,16 +4,15 @@ class User < ActiveRecord::Base
 
   is_gravtastic
 
-  has_many :presentations
-  has_many :tweets
-  has_many :projects
-  has_one  :feed
+  has_many   :presentations
+  has_many   :tweets
+  has_many   :projects
+  has_one    :feed
+  belongs_to :company
 
   accepts_nested_attributes_for :feed, :reject_if => proc { |attrs| attrs.nil? || attrs.all? { |key, value| value.blank? } }
 
-  attr_accessible :twitter
-  attr_accessible :github
-  attr_accessible :feed_attributes
+  attr_accessible :twitter, :github, :feed_attributes, :company_id
 
   validates_format_of :twitter, :with => /^\w{1,15}$/, :allow_nil => true
   before_validation :cleanout_twitter
