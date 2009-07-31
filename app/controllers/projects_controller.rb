@@ -1,12 +1,7 @@
-class ProjectsController < ApplicationController
+class ProjectsController < ResourceController::Base
 
-  def index
-    @projects = Project.all
+  index.before do
     @left_projects, @right_projects = @projects.halve
-  end
-
-  def show
-    @project = Project.find params[:id]
   end
 
 end
