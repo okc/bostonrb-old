@@ -7,23 +7,25 @@ module ActionView
       @_rendered = { :template => nil, :partials => Hash.new(0) }
       initialize_without_template_tracking(*args)
     end
+
+    attr_internal :rendered
   end
 
-  module Renderable
-    alias_method :render_without_template_tracking, :render
-    def render(view, local_assigns = {})
-      if respond_to?(:path) && !is_a?(InlineTemplate)
-        rendered = view.instance_variable_get(:@_rendered)
-        rendered[:partials][self] += 1 if is_a?(RenderablePartial)
-        rendered[:template] ||= self
-      end
-      render_without_template_tracking(view, local_assigns)
+  class Template
+    alias_method :render_without_tracking, :render
+    def render(view, locals, &blk)
+      rendered = view.rendered
+      rendered[:partials][self] += 1 if partial?
+      rendered[:template] ||= []
+      rendered[:template] << self
+      render_without_tracking(view, locals, &blk)
     end
   end
 
   class TestCase < ActiveSupport::TestCase
-    include ActionController::TestCase::Assertions
+    include ActionDispatch::Assertions
     include ActionController::TestProcess
+    include ActionView::Context
 
     class_inheritable_accessor :helper_class
     @@helper_class = nil
@@ -68,9 +70,8 @@ module ActionView
       def initialize
         @request = ActionController::TestRequest.new
         @response = ActionController::TestResponse.new
-        
+
         @params = {}
-        send(:initialize_current_url)
       end
     end
 

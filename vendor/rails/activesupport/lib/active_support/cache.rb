@@ -1,4 +1,13 @@
 require 'benchmark'
+require 'active_support/core_ext/benchmark'
+require 'active_support/core_ext/exception'
+require 'active_support/core_ext/class/attribute_accessors'
+
+%w(hash nil string time date date_time array big_decimal range object boolean).each do |library|
+  require "active_support/core_ext/#{library}/conversions"
+end
+
+# require 'active_support/core_ext' # FIXME: pulling in all to_param extensions
 
 module ActiveSupport
   # See ActiveSupport::Cache::Store for documentation.
@@ -6,7 +15,6 @@ module ActiveSupport
     autoload :FileStore, 'active_support/cache/file_store'
     autoload :MemoryStore, 'active_support/cache/memory_store'
     autoload :SynchronizedMemoryStore, 'active_support/cache/synchronized_memory_store'
-    autoload :DRbStore, 'active_support/cache/drb_store'
     autoload :MemCacheStore, 'active_support/cache/mem_cache_store'
     autoload :CompressedMemCacheStore, 'active_support/cache/compressed_mem_cache_store'
 
@@ -26,8 +34,8 @@ module ActiveSupport
     #   ActiveSupport::Cache.lookup_store(:memory_store)
     #   # => returns a new ActiveSupport::Cache::MemoryStore object
     #   
-    #   ActiveSupport::Cache.lookup_store(:drb_store)
-    #   # => returns a new ActiveSupport::Cache::DRbStore object
+    #   ActiveSupport::Cache.lookup_store(:mem_cache_store)
+    #   # => returns a new ActiveSupport::Cache::MemCacheStore object
     #
     # Any additional arguments will be passed to the corresponding cache store
     # class's constructor:
@@ -44,7 +52,7 @@ module ActiveSupport
 
       case store
       when Symbol
-        store_class_name = (store == :drb_store ? "DRbStore" : store.to_s.camelize)
+        store_class_name = store.to_s.camelize
         store_class = ActiveSupport::Cache.const_get(store_class_name)
         store_class.new(*parameters)
       when nil
@@ -54,19 +62,27 @@ module ActiveSupport
       end
     end
 
+    RAILS_CACHE_ID   = ENV["RAILS_CACHE_ID"]
+    RAILS_APP_VERION = ENV["RAILS_APP_VERION"]
+    EXPANDED_CACHE   = RAILS_CACHE_ID || RAILS_APP_VERION
+
     def self.expand_cache_key(key, namespace = nil)
       expanded_cache_key = namespace ? "#{namespace}/" : ""
 
-      if ENV["RAILS_CACHE_ID"] || ENV["RAILS_APP_VERSION"]
-        expanded_cache_key << "#{ENV["RAILS_CACHE_ID"] || ENV["RAILS_APP_VERSION"]}/"
+      if EXPANDED_CACHE
+        expanded_cache_key << "#{RAILS_CACHE_ID || RAILS_APP_VERION}/"
       end
 
-      expanded_cache_key << case
-        when key.respond_to?(:cache_key)
+      expanded_cache_key <<
+        if key.respond_to?(:cache_key)
           key.cache_key
-        when key.is_a?(Array)
-          key.collect { |element| expand_cache_key(element) }.to_param
-        when key
+        elsif key.is_a?(Array)
+          if key.size > 1
+            key.collect { |element| expand_cache_key(element) }.to_param
+          else
+            key.first.to_param
+          end
+        elsif key
           key.to_param
         end.to_s
 
@@ -131,8 +147,8 @@ module ActiveSupport
       #
       # For example, MemCacheStore's #write method supports the +:expires_in+
       # option, which tells the memcached server to automatically expire the
-      # cache item after a certain period. We can use this option with #fetch
-      # too:
+      # cache item after a certain period. This options is also supported by
+      # FileStore's #read method. We can use this option with #fetch too:
       #
       #   cache = ActiveSupport::Cache::MemCacheStore.new
       #   cache.fetch("foo", :force => true, :expires_in => 5.seconds) do
@@ -171,6 +187,10 @@ module ActiveSupport
       # You may also specify additional options via the +options+ argument.
       # The specific cache store implementation will decide what to do with
       # +options+.
+      #
+      # For example, FileStore supports the +:expires_in+ option, which
+      # makes the method return nil for cache items older than the specified
+      # period.
       def read(key, options = nil)
         log("read", key, options)
       end

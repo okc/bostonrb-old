@@ -1,4 +1,4 @@
-require "active_support/core_ext/module"
+require 'active_support/deprecation'
 
 module ActiveSupport
   module Testing
@@ -37,21 +37,19 @@ end
 
 begin
   require 'test/unit/error'
-
+rescue LoadError
+  # Using miniunit, ignore.
+else
   module Test
     module Unit
-      class Error # :nodoc:
+      class Error #:nodoc:
         # Silence warnings when reporting test errors.
         def message_with_silenced_deprecation
-          ActiveSupport::Deprecation.silence do
-            message_without_silenced_deprecation
-          end
+          ActiveSupport::Deprecation.silence { message_without_silenced_deprecation }
         end
-
-        alias_method_chain :message, :silenced_deprecation
+        alias_method :message_without_silenced_deprecation, :message
+        alias_method :message, :message_with_silenced_deprecation
       end
     end
   end
-rescue LoadError
-  # Using miniunit, ignore.
 end
