@@ -32,10 +32,10 @@ Rails::Initializer.run do |config|
     :lib     => 'twitter_search'
   config.gem 'gravtastic',
     :version => '= 2.1.0'
-  config.gem 'haml',
-    :version => '2.2.20'
   config.gem "json",
     :version => '= 1.2.4'
+  config.gem 'haml',
+    :version => '2.2.20'
   config.gem 'has_markup',
     :version => '0.1.5'
   config.gem "thoughtbot-clearance", 
@@ -52,13 +52,21 @@ Rails::Initializer.run do |config|
     :version => '0.2.2'
   config.gem "josevalim-inherited_resources",
     :lib     => "inherited_resources",
+    :source  => 'http://gems.github.com', 
     :version => "0.8.5"
+  config.gem "rest-client" #req dancroak-le-git
+  config.gem "happymapper" #req dancroak-le-git
   config.gem "dancroak-le-git",
     :lib     => "le_git",
+    :source  => 'http://gems.github.com', 
     :version => "0.0.5"
-  config.gem 'taf2-curb', :lib => 'curb', :version => '0.2.8.0' # feezirra would normally depend on this, but doesn't depend a working it works with
+  config.gem 'taf2-curb',
+    :lib     => 'curb',
+    :source  => 'http://gems.github.com', 
+    :version => '0.2.8.0' # feezirra would normally depend on this, but doesn't depend a working it works with
   config.gem "technicalpickles-feedra",
     :lib     => "feedra",
+    :source  => 'http://gems.github.com', 
     :version => "0.1.1"
   config.gem "will_paginate",
     :version => "2.3.11"
