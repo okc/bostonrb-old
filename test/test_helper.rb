@@ -1,35 +1,13 @@
 ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-require 'test_help'
+require File.expand_path('../../config/environment', __FILE__)
+require 'rails/test_help'
 
 class ActiveSupport::TestCase
-  self.use_transactional_fixtures = true
-  self.use_instantiated_fixtures  = false
+  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
+  #
+  # Note: You'll currently still have to declare fixtures explicitly in integration tests
+  # -- they do not yet inherit this setting
+  fixtures :all
 
-  # Uncomment to not quiet backtrace
-  #Rails.backtrace_cleaner.remove_silencers! 
-
-  def file_fixture(name)
-    File.read(File.join(File.dirname(__FILE__), "file_fixtures", name))
-  end
-
-  def stubbed_action_view
-    view = ActionView::Base.new(@controller.class.view_paths, {}, @controller)
-    yield view
-    ActionView::Base.stubs(:new).returns(view)
-  end
+  # Add more helper methods to be used by all tests here...
 end
-
-module StubChainMocha
-  module Object
-    def stub_chain(*methods)
-      while methods.length > 1 do
-        stubs(methods.shift).returns(self)
-      end
-      stubs(methods.shift)
-    end
-  end
-end
-
-Object.send(:include, StubChainMocha::Object)
-

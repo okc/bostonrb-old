@@ -1,3 +1,6 @@
+# This is a command file used by capistrano.  Comment added by hand.
+#
 load 'deploy' if respond_to?(:namespace) # cap2 differentiator
 Dir['vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
-load "#{ENV['HOME']}/.bostonrb/deploy.rb"
+
+load 'config/deploy' # remove this line to skip loading any of the default tasks

@@ -1,12 +1,10 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :jobs, :collection => {:old => :get}
 
-  map.resources :presentations, :only => [:new,  :create,
-                                          :edit, :update,
-                                          :show, :destroy]
+  map.resources :presentations
   map.resources :projects
   map.resources :apps
-  map.resources :events
+  map.resources :events, :member => { :copy => :get }
   map.resources :pages
   map.resources :passwords
   map.resources :companies do |companies|

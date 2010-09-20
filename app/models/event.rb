@@ -21,15 +21,15 @@ class Event < ActiveRecord::Base
     lat && lng
   end
 
-  named_scope :next, lambda {|*args|
+  scope :next, lambda {|*args|
     limit = args.first || 1
     { :conditions => ['date > ?', DateTime.now],
       :order      => 'date asc',
       :limit      => limit }
   }
 
-  named_scope :recurring, :conditions => { :recurring => true }
-  named_scope :special,   :conditions => { :recurring => false }
+  scope :recurring, :conditions => { :recurring => true }
+  scope :special,   :conditions => { :recurring => false }
 
   protected
 

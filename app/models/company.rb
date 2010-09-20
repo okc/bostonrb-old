@@ -16,5 +16,5 @@ class Company < ActiveRecord::Base
     name
   end
 
-  named_scope :alphabetical, :order => "name asc"
+  scope :alphabetical, :order => "name asc"
 end

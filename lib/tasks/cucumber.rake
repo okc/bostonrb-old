@@ -1,6 +1,7 @@
-$LOAD_PATH.unshift(RAILS_ROOT + '/vendor/plugins/cucumber/lib') if File.directory?(RAILS_ROOT + '/vendor/plugins/cucumber/lib')
+$LOAD_PATH.unshift(::Rails.root.to_s + '/vendor/plugins/cucumber/lib') if File.directory?(::Rails.root.to_s + '/vendor/plugins/cucumber/lib')
 
 begin
+  gem 'cucumber' #, '=0.3.11'
   require 'cucumber/rake/task'
 
   Cucumber::Rake::Task.new(:features) do |t|

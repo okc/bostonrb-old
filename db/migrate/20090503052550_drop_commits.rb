@@ -1,6 +1,6 @@
 class DropCommits < ActiveRecord::Migration
   def self.up
-    remove_column :commits
+    drop_table "commits"
   end
 
   def self.down

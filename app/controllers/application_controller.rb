@@ -2,7 +2,8 @@ class ApplicationController < ActionController::Base
   helper :all
   protect_from_forgery
 
-  include HoptoadNotifier::Catcher
+# remove per http://www.madcowley.com/madcode/2010/02/upgrading-hoptoad-uninitialized-constant-hoptoadnotifiercatcher/
+#  include HoptoadNotifier::Catcher
   include Clearance::Authentication
 
   before_filter :authenticate,

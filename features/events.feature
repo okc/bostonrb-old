@@ -8,7 +8,7 @@ Feature: Events
     When I sign in as "email@person.com/password"
     And I go to the homepage
     And I follow "New Event"
-    And I select a date 10 days in the future for "Date"
+    And I fill in "Date" with "tomorrow at 7PM"
     And I fill in "Title" with "Hackfest"
     And I fill in "Location" with "41 Winter Street, Boston, MA, 02018"
     And I check "Recurring"
@@ -17,6 +17,21 @@ Feature: Events
     Then I should see "Events"
     And I should see "Hackfest"
     And I should see "Hack away"
+
+  Scenario: A signed in user creates a copy of a recurring event
+    Given I am signed up and confirmed as "email@person.com/password"
+    And a future recurring event exists with a title of "Hackfest"
+    When I sign in as "email@person.com/password"
+    And I go to the homepage
+    And I follow "Hackfest"
+    And I follow "Copy"
+    Then I should see "Copy of Hackfest"
+    And I fill in "Date" with "tomorrow at 7PM"
+    And I fill in "Title" with "Hackfest squared"
+    And I press "Create"
+    Then I should see "Events"
+    And I should see "Hackfest squared"
+
 
   Scenario: Recurring events on the homepage
     Given a future special event exists with a title of "Barcamp Boston"
@@ -62,3 +77,9 @@ Feature: Events
     Then I should see an entry for "Barcamp Boston"
     And I should see an entry for "Hackfest"
     And I should not see an entry for "PHPConf"
+
+  Scenario: Viewing events rss feed
+    Given a future special event exists with a title of "Barcamp Boston"
+    Given a future recurring event exists with a title of "Hackfest"
+    When I go to the events rss feed
+    Then I should be redirected to "the events atom feed"
